@@ -20,7 +20,7 @@ def main():
 
         # 3. Crear cifrador
         plaintext = input("Ingresa el mensaje a cifrar: ").encode()
-        nonce = get_random_bytes(8 if cipher_choice == "Salsa20" else 12)
+        nonce = get_random_bytes(8) if cipher_choice == "Salsa20" else get_random_bytes(12)
 
         if cipher_choice == "Salsa20":
             cipher = Salsa20.new(key=key, nonce=nonce)

@@ -71,6 +71,6 @@ def client(server_ip):
     
     client_socket.close()
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     ip = '127.0.0.1'
-    client(ip)
+    client(ip)

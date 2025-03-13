@@ -29,7 +29,8 @@ def main():
             print(f"[*] Llave enviada al Cliente: {key.hex()}")
 
             # 3. Recibir datos cifrados
-            nonce = conn.recv(24)  # Nonce de 8 o 12 bytes según cifrador
+            nonce_length = 8 if cipher_choice == "Salsa20" else 12
+            nonce = conn.recv(nonce_length)  # Nonce de 8 o 12 bytes según cifrador
             ciphertext = conn.recv(1024)
 
             # 4. Descifrar datos
