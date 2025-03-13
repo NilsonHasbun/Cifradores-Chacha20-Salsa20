@@ -39,7 +39,21 @@ def decrypt_aes(key, ciphertext, mode, iv=None):
     unpadder = padding.PKCS7(128).unpadder()
     return unpadder.update(decrypted_padded) + unpadder.finalize()
 
-# Cliente
+def apply_security(key, data, mode, iv, security):
+    if security == "doble":
+        data = encrypt_aes(key, data, mode, iv)
+        data = encrypt_aes(key, data, mode, iv)
+    elif security == "triple":
+        data = encrypt_aes(key, data, mode, iv)
+        data = decrypt_aes(key, data, mode, iv)
+        data = encrypt_aes(key, data, mode, iv)
+    elif security == "blanqueo":
+        whitened_key = bytes(a ^ b for a, b in zip(key, iv))
+        data = encrypt_aes(whitened_key, data, mode, iv)
+    else:
+        data = encrypt_aes(key, data, mode, iv)
+    return data
+
 def client(server_ip):
     key = input("Ingrese la clave compartida en Base64: ")
     key = base64.b64decode(key)
@@ -60,11 +74,11 @@ def client(server_ip):
     print("Clave de sesión recibida correctamente.")
     
     while True:
-        message = input("Ingrese mensaje a enviar (Ingrese SALIR para terminar la comunicacion): ")
+        message = input("Ingrese mensaje a enviar (Ingrese SALIR para terminar la comunicación): ")
         if message.lower() == "salir":
             break
         
-        encrypted_message = encrypt_aes(key, message.encode(), mode, iv)
+        encrypted_message = apply_security(key, message.encode(), mode, iv, security)
         print(f"Mensaje cifrado: {base64.b64encode(encrypted_message).decode()}")
 
         client_socket.send(base64.b64encode(encrypted_message))
